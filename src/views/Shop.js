@@ -1,33 +1,26 @@
-import React, { Component } from 'react'
+import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom';
 import Product from '../components/Product';
 
+export default function Shop() {
+    const [products, setProducts] = useState([]);
 
-export default class Shop extends Component {
-    constructor(){
-      super();
-      this.state = {
-          products: []    
+    useEffect(async ()=>{
+        const res = await fetch(`http://localhost:5000/api/products`);
+        const data = await res.json();
+        if (data.status === 'ok') {
+            setProducts(data.products)
         }
-    }
+        else {
+            // redirect
+        }
+    },[])
 
-  componentDidMount = async () => {
-     const res = await fetch(`http://127.0.0.1:5000/api/products`);
-     const data = await res.json();
-     console.log(data)
-     const myProducts = data.products
-    this.setState({
-        products: myProducts
 
-      })
-
-  }
-
-  render() {
-    return (
-      <div className='row justify-content-around'>
-        {this.state.products.map((p, i)=><Product key={i} product={p} />)}
-        </div>
-    )
-  }
+  return (
+    <div className='row'>
+        <Link to='/shop/post/create'><button type='button' className='btn btn-primary'>Create Product</button></Link>
+        {products.map((p, i)=><Product key={i} product={p}/>)}
+    </div>
+  )
 }
-  
